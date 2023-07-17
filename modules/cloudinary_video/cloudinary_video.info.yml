@@ -1,0 +1,14 @@
+name: 'Cloudinary video'
+description: 'The module provides a Cloudinary video integration.'
+package: Cloudinary
+type: module
+core_version_requirement: ^9.3 || ^10
+configure: cloudinary_sdk.settings
+dependencies:
+  - cloudinary:cloudinary_media_library_widget
+  - video_embed_field:video_embed_media
+
+# Information added by Drupal.org packaging script on 2022-12-06
+version: '2.1.3'
+project: 'cloudinary'
+datestamp: 1670330181

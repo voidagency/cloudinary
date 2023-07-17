@@ -1,0 +1,13 @@
+name: 'Cloudinary Storage Database'
+description: 'The module provides stores information in database for uploaded Cloudinary files.'
+package: Cloudinary
+core_version_requirement: ^9.3 || ^10
+dependencies:
+  - cloudinary:cloudinary_storage
+  - cloudinary:cloudinary
+type: module
+
+# Information added by Drupal.org packaging script on 2022-12-06
+version: '2.1.3'
+project: 'cloudinary'
+datestamp: 1670330181

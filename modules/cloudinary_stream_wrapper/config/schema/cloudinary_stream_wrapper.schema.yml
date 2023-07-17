@@ -1,0 +1,12 @@
+cloudinary_stream_wrapper.settings:
+  type: config_object
+  label: 'Cloudinary Stream Wrapper Settings'
+  mapping:
+    cloudinary_stream_wrapper_logging:
+      label: 'Stream Wrapper Logging'
+      type: integer
+    cloudinary_stream_wrapper_folders:
+      label: 'Stream Wrapper Folders'
+      type: sequence
+      sequence:
+        type: string

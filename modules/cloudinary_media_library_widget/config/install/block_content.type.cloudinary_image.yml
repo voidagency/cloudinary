@@ -1,0 +1,7 @@
+langcode: en
+status: true
+dependencies: {  }
+id: cloudinary_image
+label: 'Cloudinary image'
+revision: 0
+description: 'Embed an image from Cloudinary media library.'

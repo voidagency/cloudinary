@@ -1,0 +1,31 @@
+cloudinary:
+  js:
+    js/cloudinary_global_all.js: { minified: true }
+
+widget:
+  js:
+    js/cloudinary_media_library.widget.js: { }
+  css:
+    component:
+      css/button.css: { }
+  dependencies:
+    - core/drupal
+    - core/jquery
+    - core/once
+    - core/drupalSettings
+    - core/drupal.ajax
+    - cloudinary_media_library_widget/cloudinary
+
+form:
+  js:
+    js/cloudinary_media_library.form.js: { }
+  css:
+    component:
+      css/form.css: { }
+      css/button.css: { }
+  dependencies:
+    - core/drupal
+    - core/jquery
+    - core/once
+    - core/drupalSettings
+    - cloudinary_media_library_widget/cloudinary

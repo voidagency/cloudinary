@@ -1,0 +1,191 @@
+<?php
+
+/**
+ * @file
+ * Main module file.
+ */
+
+use Cloudinary\Api\Admin\AdminApi;
+use Drupal\cloudinary_media_library_widget\CloudinaryMediaWidgetHelper;
+use Drupal\Core\Form\FormStateInterface;
+use Drupal\Core\Link;
+use Drupal\Core\Url;
+use Drupal\file\FileInterface;
+
+/**
+ * Implements hook_form_FORM_ID_alter() for cloudinary_sdk_settings().
+ *
+ * Alters the setting form for Cloudinary settings.
+ *
+ * @see cloudinary_sdk_settings()
+ */
+function cloudinary_media_library_widget_form_cloudinary_sdk_settings_alter(&$form, $form_state) {
+  $config = \Drupal::config('cloudinary_media_library_widget.settings');
+  $form['widget'] = [
+    '#type' => 'fieldset',
+    '#title' => t('Media library widget settings'),
+    '#collapsible' => TRUE,
+    '#collapsed' => FALSE,
+  ];
+
+  $form['widget']['cloudinary_saml_auth'] = [
+    '#type' => 'checkbox',
+    '#title' => t('SAML Authentication'),
+    '#default_value' => $config->get('cloudinary_saml_auth'),
+    '#description' => t('Whether to perform automatic SSO login via SAML for the specified username. This parameter is only needed if the "Enforce SAML login" option is disabled for your account.'),
+  ];
+
+  try {
+    $api = new AdminApi();
+    $root_folders = $api->rootFolders();
+    $folders = array_map(function ($folder) {
+      return t('Folder: /@path', ['@path' => $folder['path']]);
+    }, $root_folders['folders']);
+  }
+  catch (\Exception $e) {
+    $folders = [];
+  }
+
+  $form['widget']['cloudinary_starting_folder'] = [
+    '#type' => 'select',
+    '#title' => t('Starting folder'),
+    '#options' => $folders,
+    '#empty_value' => '/',
+    '#empty_option' => t('Root'),
+    '#default_value' => $config->get('cloudinary_starting_folder'),
+    '#description' => t('Instructs the widget to open in browse mode, displaying the contents of the specified folder.'),
+  ];
+
+  $form['optimizations'] = [
+    '#type' => 'fieldset',
+    '#title' => t('Optimizations'),
+    '#collapsible' => TRUE,
+    '#collapsed' => FALSE,
+  ];
+
+  $image_optimizations = $config->get('cloudinary_image_optimizations') ?? [];
+  $form['optimizations']['cloudinary_image_optimizations'] = [
+    '#type' => 'textarea',
+    '#title' => t('Default optimizations for image'),
+    '#default_value' => $image_optimizations,
+    '#description' => t('Represents a different component (separated by a "/"), for example: c_scale,w_400/f_auto/q_auto. Check official @docs to get more details.', [
+      '@docs' => Link::fromTextAndUrl(
+        t('docs'),
+        Url::fromUri('https://cloudinary.com/documentation/image_transformations')->setOption('attributes', ['target' => '_blank'])
+      )->toString(),
+    ]),
+    '#rows' => 2,
+    '#weight' => 1,
+  ];
+
+  $breakpoints = $config->get('cloudinary_responsive_breakpoints') ?? [];
+  $form['optimizations']['cloudinary_responsive_breakpoints'] = [
+    '#type' => 'textarea',
+    '#title' => t('Responsive breakpoints'),
+    '#default_value' => CloudinaryMediaWidgetHelper::convertArrayOptionsToString($breakpoints),
+    '#description' => t('Enter one value per line or separate it by comma. Check official @docs to get more details.', [
+      '@docs' => Link::fromTextAndUrl(
+        t('docs'),
+        Url::fromUri('https://cloudinary.com/documentation/responsive_images#overriding_default_values')->setOption('attributes', ['target' => '_blank'])
+      )->toString(),
+    ]),
+    '#weight' => 3,
+  ];
+
+  $form['#submit'][] = 'cloudinary_media_library_widget_settings_submit';
+}
+
+/**
+ * Submit for the cloudinary_sdk_settings() form.
+ */
+function cloudinary_media_library_widget_settings_submit($form, FormStateInterface $form_state) {
+  $sdk_config = \Drupal::configFactory()
+    ->getEditable('cloudinary_media_library_widget.settings');
+
+  $settings = [
+    'cloudinary_saml_auth',
+    'cloudinary_starting_folder',
+    'cloudinary_image_optimizations',
+  ];
+
+  // Set standard configuration.
+  foreach ($settings as $option) {
+    $sdk_config->set($option, $form_state->getValue($option));
+  }
+
+  // Convert breakpoints to the proper format if it was seperated by comma.
+  $breakpoints = explode(',', $form_state->getValue('cloudinary_responsive_breakpoints', ''));
+  $breakpoints = array_map('trim', $breakpoints);
+  $breakpoints_value = CloudinaryMediaWidgetHelper::convertArrayOptionsToString($breakpoints);
+
+  $sdk_config->set('cloudinary_responsive_breakpoints', CloudinaryMediaWidgetHelper::convertStringOptionsToArray($breakpoints_value));
+  $sdk_config->save();
+}
+
+/**
+ * Implements hook_theme().
+ */
+function cloudinary_media_library_widget_theme() {
+  return [
+    'cloudinary_image_formatter' => [
+      'variables' => [
+        'item' => NULL,
+        'item_attributes' => NULL,
+        'url' => NULL,
+      ],
+    ],
+  ];
+}
+
+/**
+ * Prepares variables for cloudinary image formatter templates.
+ *
+ * Default template: cloudinary-image-formatter.html.twig.
+ *
+ * @param array $variables
+ *   An associative array containing:
+ *   - item: An ImageItem object.
+ *   - item_attributes: An optional associative array of HTML attributes to be
+ *     placed in the img tag.
+ *   - url: An optional \Drupal\Core\Url object.
+ */
+function template_preprocess_cloudinary_image_formatter(&$variables) {
+  /** @var \Drupal\cloudinary_media_library_widget\CloudinaryMediaTransformationInterface $transformation */
+  $transformation = \Drupal::service('cloudinary_media_library_widget.media_transformation');
+
+  $attributes = [];
+  $item = $variables['item'];
+  $media = $item->getEntity();
+
+  // Build the Cloudinary URI with applied transformations.
+  $file = $media->get('field_media_cloudinary_image')->entity;
+  assert($file instanceof FileInterface);
+
+  $file_uri = $file->getFileUri();
+  [, $public_id] = explode('://', $file_uri, 2);
+
+  $variables['cloudinary_image'] = [
+    '#type' => 'cloudinary_image',
+    '#public_id' => $public_id,
+    '#alt' => $item->alt,
+    '#raw_transformation' => $media->get('field_cloudinary_transformation')->value ?? NULL,
+  ];
+
+  foreach (['width', 'height'] as $key) {
+    if ($item->{$key}) {
+      $variables['cloudinary_image']["#{$key}"] = $item->{$key};
+    }
+  }
+
+  // Do not output an empty 'title' attribute.
+  if (!is_null($item->title) && mb_strlen($item->title) != 0) {
+    $variables['cloudinary_image']['#title'] = $item->title;
+  }
+
+  // Need to check that item_attributes has a value since it can be NULL.
+  if ($variables['item_attributes']) {
+    $attributes += $variables['item_attributes'];
+  }
+
+  $variables['cloudinary_image']['#attributes'] = $attributes;
+}

@@ -1,0 +1,16 @@
+cloudinary_video.settings:
+  type: config_object
+  label: 'Cloudinary video settings'
+  mapping:
+    cloudinary_video_optimizations:
+      type: string
+      label: 'Default optimizations for video'
+    cloudinary_default_player:
+      type: string
+      label: 'Default player'
+    cloudinary_video_player_config:
+      type: text
+      label: 'Default Cloudinary player configuration'
+    cloudinary_default_player_config:
+      type: text
+      label: 'Default HTML5 player configuration'

@@ -1,0 +1,12 @@
+langcode: en
+status: true
+dependencies: {  }
+id: cloudinary_image
+label: 'Cloudinary image'
+description: 'A remotely hosted image on Cloudinary media library.'
+source: image
+queue_thumbnail_downloads: false
+new_revision: false
+source_configuration:
+  source_field: field_media_cloudinary_image
+field_map: {  }

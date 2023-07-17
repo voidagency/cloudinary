@@ -1,0 +1,132 @@
+<?php
+
+/**
+ * @file
+ * Cloudinary video integration.
+ */
+
+use Drupal\Core\Form\FormStateInterface;
+use Drupal\Core\Link;
+use Drupal\Core\Url;
+
+/**
+ * Implements hook_form_FORM_ID_alter() for cloudinary_sdk_settings().
+ *
+ * Alters the setting form for Cloudinary settings.
+ *
+ * @see cloudinary_sdk_settings()
+ */
+function cloudinary_video_form_cloudinary_sdk_settings_alter(&$form, $form_state) {
+  $config = \Drupal::config('cloudinary_video.settings');
+
+  $video_optimizations = $config->get('cloudinary_video_optimizations') ?? [];
+  $form['optimizations']['cloudinary_video_optimizations'] = [
+    '#type' => 'textarea',
+    '#title' => t('Default optimizations for video'),
+    '#default_value' => $video_optimizations,
+    '#description' => t('Represents a different component (separated by a "/"), for example: ar_1:1,c_fill,g_auto,w_300/e_blur:50/r_max. Check official @docs to get more details.', [
+      '@docs' => Link::fromTextAndUrl(
+        t('docs'),
+        Url::fromUri('https://cloudinary.com/documentation/video_manipulation_and_delivery')->setOption('attributes', ['target' => '_blank'])
+      )->toString(),
+    ]),
+    '#rows' => 2,
+    '#weight' => 2,
+  ];
+
+  $form['video'] = [
+    '#type' => 'fieldset',
+    '#title' => t('Video playback'),
+    '#collapsible' => TRUE,
+    '#collapsed' => FALSE,
+  ];
+
+  $form['video']['cloudinary_default_player'] = [
+    '#type' => 'radios',
+    '#title' => t('Default player'),
+    '#options' => [
+      'html5' => t('HTML 5 Player'),
+      'cloudinary' => t('Cloudinary Video player'),
+    ],
+    '#default_value' => $config->get('cloudinary_default_player'),
+    '#required' => TRUE,
+  ];
+
+  $form['video']['cloudinary_default_player_config'] = [
+    '#type' => 'textfield',
+    '#title' => t('Default HTML5 player configuration'),
+    '#default_value' => $config->get('cloudinary_default_player_config') ?? '',
+    '#description' => t('Provide list of attributes separated by space, e.g <strong>controls loop preload="auto"</strong>. Check available player attributes @here.', [
+      '@here' => Link::fromTextAndUrl(
+        t('here'),
+        Url::fromUri('https://www.w3schools.com/tags/tag_video.asp')->setOption('attributes', ['target' => '_blank'])
+      )->toString(),
+      '@link' => Link::fromTextAndUrl(
+        t('Video Player studio'),
+        Url::fromUri('https://studio.cloudinary.com')->setOption('attributes', ['target' => '_blank'])
+      )->toString(),
+    ]),
+    '#states' => [
+      'visible' => [
+        'input[name="cloudinary_default_player"]' => ['value' => 'html5'],
+      ],
+    ],
+  ];
+
+  $form['video']['cloudinary_video_player_config'] = [
+    '#type' => 'textarea',
+    '#title' => t('Default Cloudinary player configuration (JSON)'),
+    '#default_value' => $config->get('cloudinary_video_player_config') ?? '',
+    '#description' => t('Check available player options @here, or use the @link to try out different configurations.', [
+      '@here' => Link::fromTextAndUrl(
+        t('here'),
+        Url::fromUri('https://cloudinary.com/documentation/video_player_api_reference#configuration_options')->setOption('attributes', ['target' => '_blank'])
+      )->toString(),
+      '@link' => Link::fromTextAndUrl(
+        t('Video Player studio'),
+        Url::fromUri('https://studio.cloudinary.com')->setOption('attributes', ['target' => '_blank'])
+      )->toString(),
+    ]),
+    '#states' => [
+      'visible' => [
+        'input[name="cloudinary_default_player"]' => ['value' => 'cloudinary'],
+      ],
+    ],
+  ];
+
+  $form['#validate'][] = 'cloudinary_video_settings_validate';
+  $form['#submit'][] = 'cloudinary_video_settings_submit';
+}
+
+/**
+ * Validation for the cloudinary_sdk_settings() form.
+ */
+function cloudinary_video_settings_validate($form, FormStateInterface $form_state) {
+  $player_config = $form_state->getValue('cloudinary_video_player_config');
+  try {
+    json_decode($player_config, NULL, 512, JSON_THROW_ON_ERROR);
+  }
+  catch (Exception $e) {
+    $form_state->setError($form['video']['cloudinary_video_player_config'], t('Invalid JSON provided for player configuration.'));
+  }
+}
+
+/**
+ * Submit for the cloudinary_sdk_settings() form.
+ */
+function cloudinary_video_settings_submit($form, FormStateInterface $form_state) {
+  $config = \Drupal::configFactory()
+    ->getEditable('cloudinary_video.settings');
+
+  $settings = [
+    'cloudinary_video_optimizations',
+    'cloudinary_default_player',
+    'cloudinary_video_player_config',
+    'cloudinary_default_player_config',
+  ];
+
+  foreach ($settings as $option) {
+    $config->set($option, $form_state->getValue($option));
+  }
+  $config->save();
+}

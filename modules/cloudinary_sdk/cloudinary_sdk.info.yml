@@ -1,0 +1,13 @@
+name: 'Cloudinary SDK'
+description: 'The module provides a library of Cloudinary PHP SDK for developers working with Cloudinary service.'
+package: Cloudinary
+type: module
+core_version_requirement: ^9.3 || ^10
+configure: cloudinary_sdk.settings
+dependencies:
+  - cloudinary:cloudinary
+
+# Information added by Drupal.org packaging script on 2022-12-06
+version: '2.1.3'
+project: 'cloudinary'
+datestamp: 1670330181

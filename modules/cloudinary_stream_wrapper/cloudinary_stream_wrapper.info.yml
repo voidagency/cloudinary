@@ -1,0 +1,13 @@
+name: 'Cloudinary Stream Wrapper'
+description: 'The module provides stream wrappers to access Cloudinary files with read or write method.'
+package: Cloudinary
+core_version_requirement: ^9.3 || ^10
+dependencies:
+  - cloudinary:cloudinary
+  - cloudinary:cloudinary_sdk
+type: module
+
+# Information added by Drupal.org packaging script on 2022-12-06
+version: '2.1.3'
+project: 'cloudinary'
+datestamp: 1670330181

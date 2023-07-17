@@ -1,0 +1,27 @@
+services:
+  cloudinary_media_library_widget.asset_normalizer:
+    class: Drupal\cloudinary_media_library_widget\Normalizer\AssetNormalizer
+    tags:
+      - { name: normalizer }
+
+  cloudinary_media_library_widget.helper:
+    class: Drupal\cloudinary_media_library_widget\CloudinaryMediaWidgetHelper
+
+  cloudinary_media_library_widget.cloudinary_access:
+    class: Drupal\cloudinary_media_library_widget\Access\CloudinaryMediaAccess
+    tags:
+      - { name: access_check, applies_to: _cloudinary_access }
+
+  cloudinary_media_library_widget.media_transformation:
+    class: Drupal\cloudinary_media_library_widget\CloudinaryMediaTransformation
+    arguments:
+      - '@config.factory'
+
+  cloudinary_media_library_widget.manager.cloudinary_media:
+    class: Drupal\cloudinary_media_library_widget\CloudinaryMediaManager
+    parent: default_plugin_manager
+
+  cloudinary_media_library_widget.asset_generator:
+    class: Drupal\cloudinary_media_library_widget\CloudinaryAssetGenerator
+    arguments:
+      - '@config.factory'

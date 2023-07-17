@@ -1,0 +1,28 @@
+langcode: en
+status: true
+dependencies:
+  config:
+    - block_content.type.cloudinary_video
+    - field.storage.block_content.field_cloudinary_media
+    - media.type.cloudinary_video
+id: block_content.cloudinary_video.field_cloudinary_media
+field_name: field_cloudinary_media
+entity_type: block_content
+bundle: cloudinary_video
+label: Video
+description: ''
+required: true
+translatable: true
+default_value: {  }
+default_value_callback: ''
+settings:
+  handler: 'default:media'
+  handler_settings:
+    target_bundles:
+      cloudinary_video: cloudinary_video
+    sort:
+      field: _none
+      direction: ASC
+    auto_create: false
+    auto_create_bundle: cloudinary_video
+field_type: entity_reference

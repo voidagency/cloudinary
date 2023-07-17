@@ -1,0 +1,14 @@
+cloudinary_media_library_widget.media:
+  path: '/cloudinary_media_library_widget/{bundle}'
+  defaults:
+    _controller: '\Drupal\cloudinary_media_library_widget\Controller\MediaController::createMedia'
+  requirements:
+    _cloudinary_access: 'TRUE'
+
+cloudinary_media_library_widget.element_form_example:
+  path: '/admin/config/media/cloudinary/example'
+  defaults:
+    _title: 'Cloudinary element example form'
+    _form: '\Drupal\cloudinary_media_library_widget\Form\CloudinaryElementExampleForm'
+  requirements:
+    _permission: 'administer cloudinary'

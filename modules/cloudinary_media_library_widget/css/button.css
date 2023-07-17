@@ -1,0 +1,15 @@
+.cloudinary-media-library-button.button {
+  margin: 0 !important;
+  background: #005ce4 !important;
+  color: #ffffff !important;
+  text-shadow: none !important;
+  border: none !important;
+}
+
+.cloudinary-media-library-button.button:hover,
+.cloudinary-media-library-button.button:focus,
+.cloudinary-media-library-button.button:active {
+  background: #005ce4 !important;
+  color: #ffffff !important;
+  border: none !important;
+}

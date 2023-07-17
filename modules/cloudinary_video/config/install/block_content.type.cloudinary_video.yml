@@ -1,0 +1,7 @@
+langcode: en
+status: true
+dependencies: {  }
+id: cloudinary_video
+label: 'Cloudinary video'
+revision: 0
+description: 'Embed a video from Cloudinary media library.'

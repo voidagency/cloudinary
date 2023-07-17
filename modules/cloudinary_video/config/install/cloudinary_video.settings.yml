@@ -1,0 +1,3 @@
+cloudinary_video_player_config: "{\r\n\r\n}"
+cloudinary_default_player_config: ''
+cloudinary_default_player: html5

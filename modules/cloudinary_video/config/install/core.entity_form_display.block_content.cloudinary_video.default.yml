@@ -1,0 +1,29 @@
+langcode: en
+status: true
+dependencies:
+  config:
+    - block_content.type.cloudinary_video
+    - field.field.block_content.cloudinary_video.field_cloudinary_media
+  module:
+    - cloudinary_media_library_widget
+id: block_content.cloudinary_video.default
+targetEntityType: block_content
+bundle: cloudinary_video
+mode: default
+content:
+  field_cloudinary_media:
+    type: cloudinary_media_library_widget
+    weight: 26
+    region: content
+    settings:
+      resource_type: video
+    third_party_settings: {  }
+  info:
+    type: string_textfield
+    weight: -5
+    region: content
+    settings:
+      size: 60
+      placeholder: ''
+    third_party_settings: {  }
+hidden: {  }

@@ -1,0 +1,13 @@
+name: Cloudinary
+description: 'The module provides image transformation of Cloudinay, auto convert default image style effects with Cloudinary transformation.'
+package: Cloudinary
+core_version_requirement: ^9.3 || ^10
+type: module
+dependencies:
+  - cloudinary:cloudinary_media_library_widget
+  - cloudinary:cloudinary_stream_wrapper
+
+# Information added by Drupal.org packaging script on 2022-12-06
+version: '2.1.3'
+project: 'cloudinary'
+datestamp: 1670330181

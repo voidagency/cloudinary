@@ -1,0 +1,13 @@
+<?php
+
+/**
+ * @file
+ * Install/update module.
+ */
+
+/**
+ * Ensure media_library is installed.
+ */
+function cloudinary_media_library_widget_update_9201(&$sandbox) {
+  \Drupal::service('module_installer')->install(['media_library']);
+}

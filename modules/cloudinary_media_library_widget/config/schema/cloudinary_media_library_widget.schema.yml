@@ -1,0 +1,26 @@
+cloudinary_media_library_widget.settings:
+  type: config_object
+  label: 'Cloudinary media library widget settings'
+  mapping:
+    cloudinary_saml_auth:
+      type: string
+      label: 'SAML Authentication'
+    cloudinary_starting_folder:
+      type: string
+      label: 'Starting folder'
+    cloudinary_image_optimizations:
+      type: string
+      label: 'Default optimizations for image'
+    cloudinary_responsive_breakpoints:
+      type: sequence
+      label: 'Responsive breakpoints'
+      sequence:
+        - type: integer
+
+field.widget.settings.cloudinary_media_library_widget:
+  type: mapping
+  label: 'Cloudinary media library settings'
+  mapping:
+    resource_type:
+      type: string
+      label: 'Resource type'

@@ -1,0 +1,22 @@
+langcode: en
+status: true
+dependencies:
+  config:
+    - block_content.type.cloudinary_video
+    - field.field.block_content.cloudinary_video.field_cloudinary_media
+id: block_content.cloudinary_video.default
+targetEntityType: block_content
+bundle: cloudinary_video
+mode: default
+content:
+  field_cloudinary_media:
+    type: entity_reference_entity_view
+    label: hidden
+    settings:
+      view_mode: default
+      link: true
+    third_party_settings: {  }
+    weight: 0
+    region: content
+hidden:
+  langcode: true

@@ -1,0 +1,19 @@
+{#
+/**
+ * @file
+ * Default theme implementation to display a formatted cloudinary image field.
+ *
+ * Available variables:
+ * - cloudinary_image: A collection of cloudinary image data.
+ * - url: An optional URL the image can be linked to.
+ *
+ * @see template_preprocess_cloudinary_image_formatter()
+ *
+ * @ingroup themeable
+ */
+#}
+{% if url %}
+  <a href="{{ url }}">{{ cloudinary_image }}</a>
+{% else %}
+  {{ cloudinary_image }}
+{% endif %}
