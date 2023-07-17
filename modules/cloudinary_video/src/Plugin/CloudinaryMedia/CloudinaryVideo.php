@@ -44,19 +44,11 @@ class CloudinaryVideo extends CloudinaryMediaBase implements CloudinaryMediaPlug
       return $media;
     }
 
-    $filepath = explode('://', $asset->getAssetUri($asset))[1];
-    $file = File::create([
-      'uid' => \Drupal::currentUser()->id(),
-      'filename' => basename($filepath),
-      'uri' => $asset->getAssetUri($asset),
-      'status' => 1,
-    ]);
-    $file->save();
     $field_name = $this->getMediaSourceFieldName($bundle);
     $media_data = [
       'bundle' => $bundle,
       'name' => $asset->getPublicId(),
-      $field_name => $file->id(),
+      $field_name => $asset->getAssetUri($asset),
     ];
 
     /** @var \Drupal\media\MediaInterface $media */
