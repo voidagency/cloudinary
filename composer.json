@@ -1,5 +1,5 @@
 {
-    "name": "b-khouy/cloudinary",
+    "name": "voidagency/cloudinary",
     "type": "drupal-module",
     "description": "The module provides a library and stream wrapper of Cloudinary service.",
     "homepage": "https://www.drupal.org/project/cloudinary",
